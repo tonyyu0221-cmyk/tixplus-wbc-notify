@@ -19,39 +19,32 @@ const lineConfig = {
 const client = new line.Client(lineConfig)
 
 /* ===== 健康檢查 ===== */
-app.post("/webhook",
-  async (req, res) => {
-    // ⭐ 不管發生什麼事，先回 200（LINE Verify 只看這個）
-    res.sendStatus(200)
+app.use(express.json())
 
-    try {
-      const events = req.body?.events
-      if (!Array.isArray(events)) return
+// ===== webhook =====
+app.post("/webhook", async (req, res) => {
+  res.sendStatus(200)
 
-      for (const event of events) {
-        // 只處理文字訊息
-        if (
-          event.type === "message" &&
-          event.message?.type === "text"
-        ) {
-          if (event.message.text.includes("查票")) {
-            const message = await checkTicketsAndNotify(false)
+  try {
+    const events = req.body?.events
+    if (!Array.isArray(events)) return
 
-            if (event.replyToken) {
-              await client.replyMessage(event.replyToken, {
-                type: "text",
-                text: message,
-              })
-            }
-          }
-        }
+    for (const event of events) {
+      if (
+        event.type === "message" &&
+        event.message?.type === "text" &&
+        event.replyToken
+      ) {
+        await client.replyMessage(event.replyToken, {
+          type: "text",
+          text: "✅ Bot 已成功回覆",
+        })
       }
-    } catch (err) {
-      // ❗ 只 log，不丟錯誤，避免 500
-      console.error("Webhook handler error:", err)
     }
+  } catch (err) {
+    console.error("Webhook handler error:", err)
   }
-)
+})
 
 /* ===== 啟動（Render 必須）===== */
 const PORT = process.env.PORT || 3000
