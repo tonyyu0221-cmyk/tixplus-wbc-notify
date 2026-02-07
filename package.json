@@ -1,0 +1,20 @@
+{
+  "name": "tixplus-wbc-notify-main",
+  "version": "1.0.0",
+  "description": "可依自己習慣及使用環境佈署",
+  "main": "tixplus-wbc-notify.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@line/bot-sdk": "^10.6.0",
+    "axios": "^1.13.4",
+    "cheerio": "^1.2.0",
+    "express": "^5.2.1",
+    "node-cron": "^4.2.1"
+  }
+}
