@@ -19,9 +19,7 @@ const lineConfig = {
 const client = new line.Client(lineConfig)
 
 /* ===== 健康檢查 ===== */
-app.post(
-  "/webhook",
-  line.middleware(lineConfig),
+app.post("/webhook",
   async (req, res) => {
     // ⭐ 不管發生什麼事，先回 200（LINE Verify 只看這個）
     res.sendStatus(200)
