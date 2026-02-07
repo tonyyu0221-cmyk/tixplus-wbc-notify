@@ -5,6 +5,7 @@ const line = require("@line/bot-sdk")
 
 const app = express()
 
+/* ===== LINE 設定（Render 環境變數）===== */
 const CONFIG = {
   CHANNEL_ACCESS_TOKEN: process.env.CHANNEL_ACCESS_TOKEN,
   CHANNEL_SECRET: process.env.CHANNEL_SECRET,
@@ -17,10 +18,12 @@ const lineConfig = {
 
 const client = new line.Client(lineConfig)
 
+/* ===== middleware ===== */
 app.use(express.json())
 
-// ===== webhook =====
+/* ===== webhook ===== */
 app.post("/webhook", async (req, res) => {
+  // ⭐ LINE 只看這行
   res.sendStatus(200)
 
   try {
@@ -36,23 +39,4 @@ app.post("/webhook", async (req, res) => {
         if (event.message.text.includes("查票")) {
           const message = await checkTicketsAndNotify()
 
-          await client.replyMessage(event.replyToken, {
-            type: "text",
-            text: message,
-          })
-        }
-      }
-    }
-  } catch (err) {
-    console.error("Webhook handler error:", err)
-  }
-})
-
-async function checkTicketsAndNotify() {
-  return "🎟 查票功能已接通（測試中）"
-}
-
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log("LINE Bot running on port", PORT)
-})
+          await client.replyMes
