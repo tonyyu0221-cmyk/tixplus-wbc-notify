@@ -19,17 +19,39 @@ const lineConfig = {
 const client = new line.Client(lineConfig)
 
 /* ===== 健康檢查 ===== */
-app.get("/", (req, res) => {
-  res.status(200).send("OK")
-})
-
-/* ===== LINE Webhook ===== */
 app.post(
   "/webhook",
   line.middleware(lineConfig),
-  (req, res) => {
-    // LINE 只在乎你有沒有回 200
+  async (req, res) => {
+    // ⭐ 不管發生什麼事，先回 200（LINE Verify 只看這個）
     res.sendStatus(200)
+
+    try {
+      const events = req.body?.events
+      if (!Array.isArray(events)) return
+
+      for (const event of events) {
+        // 只處理文字訊息
+        if (
+          event.type === "message" &&
+          event.message?.type === "text"
+        ) {
+          if (event.message.text.includes("查票")) {
+            const message = await checkTicketsAndNotify(false)
+
+            if (event.replyToken) {
+              await client.replyMessage(event.replyToken, {
+                type: "text",
+                text: message,
+              })
+            }
+          }
+        }
+      }
+    } catch (err) {
+      // ❗ 只 log，不丟錯誤，避免 500
+      console.error("Webhook handler error:", err)
+    }
   }
 )
 
