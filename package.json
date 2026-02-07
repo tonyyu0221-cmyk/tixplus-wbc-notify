@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node tixplus-wbc-notify.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@line/bot-sdk": "^10.6.0",
