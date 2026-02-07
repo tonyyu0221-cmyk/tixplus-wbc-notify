@@ -1,26 +1,14 @@
 "use strict"
 
-const axios = require("axios")
-const cheerio = require("cheerio")
-const cron = require("node-cron")
 const express = require("express")
 const line = require("@line/bot-sdk")
 
-/* ======================
-   Express
-====================== */
 const app = express()
 
-/* ======================
-   設定（全部用環境變數）
-====================== */
+/* ===== 基本設定（全部用環境變數）===== */
 const CONFIG = {
-  CHANNEL_ACCESS_TOKEN: zqJ2V1YFmuT5vfe7pqYFSTLdJqYAVPDTu5XSr9jYE8H8NOOG6jt+EM81vBci+wd/I955tKAcNLfsH+OLvmgzvNcwB6GypxC+0kfktzOonzPN6rU3jfqqzn0DqW9PLyBDYs+tO0wGFtM4RNBOCCQEcwdB04t89/1O/w1cDnyilFU=,
-  CHANNEL_SECRET: 1bd3bb44bd185ce2acee36a03c995efc,
-  USER_ID: Uanamnesisnight, // 一定要是 U 開頭
-  TARGET_URL: "https://tradead.tixplus.jp/wbc2026",
-  CHECK_INTERVAL: "*/15 * * * *",
-  NUMBER_OF_REMINDERS: 1,
+  CHANNEL_ACCESS_TOKEN: process.env.CHANNEL_ACCESS_TOKEN,
+  CHANNEL_SECRET: process.env.CHANNEL_SECRET,
 }
 
 const lineConfig = {
@@ -30,24 +18,24 @@ const lineConfig = {
 
 const client = new line.Client(lineConfig)
 
-/* ======================
-   狀態記憶（只通知新刊登）
-====================== */
-let lastListingsCount = 0
-
-/* ======================
-   健康檢查（重要）
-====================== */
+/* ===== 健康檢查 ===== */
 app.get("/", (req, res) => {
   res.status(200).send("OK")
 })
 
-/* ======================
-   LINE Webhook（重點）
-====================== */
+/* ===== LINE Webhook ===== */
 app.post(
   "/webhook",
   line.middleware(lineConfig),
-  async (req, res) => {
-    // ⭐ 不
+  (req, res) => {
+    // LINE 只在乎你有沒有回 200
+    res.sendStatus(200)
+  }
+)
+
+/* ===== 啟動（Render 必須）===== */
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log("LINE Bot running on port", PORT)
+})
 
